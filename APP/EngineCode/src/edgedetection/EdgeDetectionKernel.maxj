@@ -1,0 +1,40 @@
+package edgedetection;
+
+import com.maxeler.maxcompiler.v2.kernelcompiler.Kernel;
+import com.maxeler.maxcompiler.v2.kernelcompiler.KernelParameters;
+import com.maxeler.maxcompiler.v2.kernelcompiler.stdlib.core.CounterChain;
+import com.maxeler.maxcompiler.v2.kernelcompiler.types.base.DFEVar;
+
+
+import com.maxeler.maxcompiler.v2.kernelcompiler.stdlib.KernelMath;
+
+class EdgeDetectionKernel extends Kernel {
+
+	protected EdgeDetectionKernel(KernelParameters parameters) {
+		super(parameters);
+
+		int height = 256, width = 256;
+
+		DFEVar inImage = io.input("inImage", dfeInt(32));
+
+
+        DFEVar Gx = -  3 * stream.offset(inImage, - 1 * width - 1)  +  3 * stream.offset(inImage, - 1 * width +  1)
+                    - 10 * stream.offset(inImage,- 1)               + 10 * stream.offset(inImage, 1)
+                    -  3 * stream.offset(inImage, 1 * width - 1)    + 3 * stream.offset(inImage, 1 * width + 1);
+        DFEVar Gy = +  3 * stream.offset(inImage, - 1 * width  - 1) + 10 * stream.offset(inImage, - 1 * width)
+                    +  3 * stream.offset(inImage, - 1 * width + 1)  -  3 * stream.offset(inImage, 1 * width - 1)
+                    - 10 * stream.offset(inImage,  1 * width)       -  3 * stream.offset(inImage, 1 * width +1);
+
+        DFEVar g = KernelMath.sqrt( ((Gx*Gx) +(Gy*Gy)).cast(dfeFloat(8,24)) );
+
+
+		CounterChain chain = control.count.makeCounterChainMoreBits();
+		DFEVar y = chain.addCounter(height, 1);
+		DFEVar x = chain.addCounter(width, 1);
+
+		g = ((x > 0 & x < width - 1) & (y > 0 & y < height - 1)) ? KernelMath.sqrt(g).cast(dfeInt(32))
+		    : 0;
+
+		io.output("outImage", g, g.getType());
+	}
+}

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<maxCompilerManager version="2">
+<enginePart internalEngineSubproject="Edge_Detection_EngineCode" isSrcBin="false" isUseDefaultSelected="false" outputLocation="/Edge_Detection_EngineCode/bin" projectName="Edge_Detection"/>
+<cpuPart internalCpuSubproject="Edge_Detection_CPUCode"/>
+<watchedFiles/>
+</maxCompilerManager>
