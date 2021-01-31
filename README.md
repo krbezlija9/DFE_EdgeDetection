@@ -1,5 +1,7 @@
 =============================
-Edge_Detection
+
+DFE_Edge_Detection
+
 =============================
 
 Edge detection of a picture.
